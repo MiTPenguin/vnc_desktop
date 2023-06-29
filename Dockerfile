@@ -164,6 +164,22 @@ RUN cp /home/ubuntu/Applications/Fiji.app/ImageJ2.desktop ~/Desktop/.
 # running the file will get the executable to automatically run and make a desktop launcher
 # this gave some non-ciritical error messages and warning, but it's nothing that would stop the building. we'll go with 
 # it for now.
+
+##### Add Miniconda #####
+RUN mkdir -p ~/miniconda3 \
+    && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh \
+    && bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 \
+    && rm -rf ~/miniconda3/miniconda.sh \
+    && ~/miniconda3/bin/conda init bash \
+    && ~/miniconda3/bin/conda init zsh
+
+##### Add Mamba #####
+RUN conda install mamba -n base -c conda-forge
+
+##### Add Napari #####
+RUN conda create -y -n napari-env -c conda-forge python=3.9 \
+    && mamba install -y -n napari-env -c conda-forge napari
+
 EXPOSE 80
 ENV HOME=/home/ubuntu \
     SHELL=/bin/bash \
