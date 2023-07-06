@@ -50,7 +50,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # add Sublime
-Run apt update \
+RUN apt update \
     && apt install -y --no-install-recommends --allow-unauthenticated \
         dirmngr gnupg apt-transport-https ca-certificates software-properties-common \
     && curl -fsSL https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add - \
@@ -72,6 +72,7 @@ COPY rootfs/usr/local/lib/web/backend/requirements.txt /tmp/
 RUN apt-get update \
     && dpkg-query -W -f='${Package}\n' > /tmp/a.txt \
     && apt-get install -y python3-pip python3-dev build-essential \
+    #&& apt-get install pip \
 	&& pip3 install setuptools wheel && pip3 install -r /tmp/requirements.txt \
     && ln -s /usr/bin/python3 /usr/local/bin/python \
     && dpkg-query -W -f='${Package}\n' > /tmp/b.txt \
@@ -112,7 +113,7 @@ RUN cd /src/web \
 RUN sed -i 's#app/locale/#novnc/app/locale/#' /src/web/dist/static/novnc/app/ui.js
 
 # install JRE
-Run apt update \
+RUN apt update \
     && apt install -y default-jre
 
 ################################################################################
@@ -166,15 +167,25 @@ RUN cp /home/ubuntu/Applications/Fiji.app/ImageJ2.desktop ~/Desktop/.
 # it for now.
 
 ##### Add Miniconda #####
+
+ENV PATH="${PATH}:/root/miniconda3/bin"
+ARG PATH="${PATH}:/root/miniconda3/bin"
+
 RUN mkdir -p ~/miniconda3 \
     && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh \
     && bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 \
     && rm -rf ~/miniconda3/miniconda.sh \
-    && ~/miniconda3/bin/conda init bash \
-    && ~/miniconda3/bin/conda init zsh
+    # && ~/miniconda3/bin/conda init bash \
+    # && ~/miniconda3/bin/conda init zsh \
+    # && echo "conda init" >> ~/.bashrc \
+    # && echo "conda init" >> ~/.zshrc \
+    # && /bin/bash -c "source ~/.bashrc" \
+    && conda install mamba -n base -c conda-forge 
 
 ##### Add Mamba #####
-RUN conda install mamba -n base -c conda-forge
+#RUN echo "conda activate base" >> ~/.bashrc \
+#    && echo "conda activate base" >> ~/.zshrc \
+#    && /bin/bash -c "source ~/.bashrc" && conda install mamba -n base -c conda-forge
 
 ##### Add Napari #####
 RUN conda create -y -n napari-env -c conda-forge python=3.9 \

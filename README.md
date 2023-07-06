@@ -29,7 +29,7 @@ the the container is running.
 for example:
 ```bash
 docker run -d -p 6080:80 -v /home/andy_tu/data/Phenocycler:/root/Desktop/Phenocycler \
--v /home/andy_tu/immunai-product/research:/root/Desktop/research/ mitpenguin/qupath_vnc:v0.3.2_fiji
+-v /home/andy_tu/immunai-product/research:/root/Desktop/research/ mitpenguin/qupath_vnc:0.5.0
 ```
 
 ### To Stop container
@@ -67,4 +67,16 @@ To be safe, try not to mount `git` root directory to the container. `git lfs` so
 
 There have also been cases where the mounted volumes had permission chanaged from `$USER` to `root`. chown command can solve it.
 
+Adding miniconda to the environment has been giving me issue. Doing it within the environment works well, but adding
+it to the docker build process is for some reason giving me issues. The resulting docker image won't run. I think it has
+to do with the fact that the default python environment might be different. 
 
+I'm going to try getting rid of the `conda init` commands.
+
+Just not doing the conda init command, and changing the path variable so that miniconda is the last search folder to be
+searched worked. I think this makes sense. There are flasks, and other python packages that's installed by default, and
+that would seem to make it essential.
+
+I don't want to futz around with it more than i have to. I will make the conda environments, but not activate the bash
+shell. That'll will just be something we do when we start a new container. In the future, maybe we can consider adding
+that as a start-up script, so it's run after the container has been made.
