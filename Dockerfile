@@ -182,14 +182,12 @@ RUN mkdir -p ~/miniconda3 \
     # && /bin/bash -c "source ~/.bashrc" \
     && conda install mamba -n base -c conda-forge 
 
-##### Add Mamba #####
-#RUN echo "conda activate base" >> ~/.bashrc \
-#    && echo "conda activate base" >> ~/.zshrc \
-#    && /bin/bash -c "source ~/.bashrc" && conda install mamba -n base -c conda-forge
-
 ##### Add Napari #####
 RUN conda create -y -n napari-env -c conda-forge python=3.9 \
     && mamba install -y -n napari-env -c conda-forge napari
+    
+##### Add Squidpy #####
+RUN mamba install -y -n napari-env -c conda-forge squidpy
 
 EXPOSE 80
 ENV HOME=/home/ubuntu \
